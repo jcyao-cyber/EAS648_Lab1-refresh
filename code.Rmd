@@ -86,23 +86,28 @@ plot(sf::st_geometry(Wayne),
      bg = "grey95", lwd = 0.5)
 
 
-#counting the share
+# counting about population
 Wayne <- Wayne %>%
   mutate(
+    #counting the share
     WhiteShare    = White / Pop2010,
     BlackShare    = Black / Pop2010,
     AsianShare    = Asian / Pop2010,
-    HispanicShare = Hispanic / Pop2010
-  )
-
-#counting the proportion
-Wayne <- Wayne %>%
-  mutate(
+    HispanicShare = Hispanic / Pop2010,
+    
+    #counting the proportion
     WhiteProportion    = White / sum(White, na.rm = TRUE),
     BlackProportion    = Black / sum(Black, na.rm = TRUE),
     AsianProportion    = Asian / sum(Asian, na.rm = TRUE),
-    HispanicProportion = Hispanic / sum(Hispanic, na.rm = TRUE)
+    HispanicProportion = Hispanic / sum(Hispanic, na.rm = TRUE),
+    
+    #counting Location Quotient
+    White_LQ    = (White    / Pop2010) / (sum(White)    / sum(Pop2010)),
+    Black_LQ    = (Black    / Pop2010) / (sum(Black)    / sum(Pop2010)),
+    Asian_LQ    = (Asian    / Pop2010) / (sum(Asian)    / sum(Pop2010)),
+    Hispanic_LQ = (Hispanic / Pop2010) / (sum(Hispanic) / sum(Pop2010))
   )
+
 
 ```
 
