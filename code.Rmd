@@ -95,5 +95,14 @@ Wayne <- Wayne %>%
     HispanicShare = Hispanic / Pop2010
   )
 
+#counting the proportion
+Wayne <- Wayne %>%
+  mutate(
+    WhiteProportion    = White / sum(White, na.rm = TRUE),
+    BlackProportion    = Black / sum(Black, na.rm = TRUE),
+    AsianProportion    = Asian / sum(Asian, na.rm = TRUE),
+    HispanicProportion = Hispanic / sum(Hispanic, na.rm = TRUE)
+  )
+
 ```
 
