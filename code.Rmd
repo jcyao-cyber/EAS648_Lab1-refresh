@@ -1,0 +1,99 @@
+---
+title: "Ethnic Population Patterns in Wayne County"
+author: "Jincheng Yao"
+subtitle: EAS 648, Lab 1
+output:
+  html_document:
+    highlight: tango
+    theme: cerulean
+  pdf_document: default
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+#code chunk to put in default settings, like whether other code chunks run/show messages
+knitr::opts_chunk$set(echo = TRUE, 
+                      messages = FALSE)
+
+# Set so that long lines in R will be wrapped:
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
+#note may need to install and load package "formatR" for this to run. 
+
+options (width = 80)
+
+```
+
+# ****
+
+###
+
+```{r 1, echo = TRUE}
+library(ggplot2)
+library(tidycensus)
+library(tmap)
+library(tmaptools)
+library(dplyr)        
+library(sf)      
+library(RColorBrewer) 
+library(classInt)     
+library(tidyverse)      
+library(cartography) 
+library(SpatialPosition)
+library(maptiles) 
+library(terra)
+library(potential)
+
+census_api_key("2495886b30a9eed86c09bc346d16b8febef89ddc")
+
+racevars <- c(
+  White      = "P005003",
+  Black      = "P005004",
+  Asian      = "P005006",
+  Hispanic   = "P004003",
+  HouseUnits = "H001001",
+  Rent       = "H004004"
+)
+
+Wayne <- tidycensus::get_decennial(
+  geography   = "tract",
+  variables   = racevars,
+  state       = "MI",
+  county      = "Wayne",
+  year        = 2010,
+  sumfile     = "sf1",      # explicit, though this is the default for 2010
+  geometry    = TRUE,
+  summary_var = "P001001"   # total population
+)
+
+Wayne <- Wayne %>%
+  tidyr::pivot_wider(
+    names_from  = variable,   # Asian, Black, Hispanic, White, etc.
+    values_from = value,
+    values_fill = 0           # fill missing group counts with 0
+  ) 
+
+names(Wayne)[names(Wayne) == "summary_value"] <- "Pop2010"
+
+
+# Example: project Wayne County data to NAD83 / UTM zone 17N
+Wayne <- sf::st_transform(Wayne, 26917)
+
+
+# Base polygons
+plot(sf::st_geometry(Wayne),
+     col = "darkseagreen3", border = "darkseagreen4",
+     bg = "grey95", lwd = 0.5)
+
+
+#counting the share
+Wayne <- Wayne %>%
+  mutate(
+    WhiteShare    = White / Pop2010,
+    BlackShare    = Black / Pop2010,
+    AsianShare    = Asian / Pop2010,
+    HispanicShare = Hispanic / Pop2010
+  )
+
+```
+
