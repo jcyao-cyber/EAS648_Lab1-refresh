@@ -44,7 +44,15 @@ library(maptiles)
 library(terra)
 library(potential)
 
+# general setting
 census_api_key("2495886b30a9eed86c09bc346d16b8febef89ddc")
+
+brks <- c(0, 0.1, 0.5, 1, 2, 5)
+
+black_pal    <- colorRampPalette(c("#F2E5FF", "#4B0082"))  
+asian_pal    <- colorRampPalette(c("#E3F2FD", "#0D47A1"))  
+hisp_pal     <- colorRampPalette(c("#FFF3E0", "#E65100"))  
+white_pal    <- colorRampPalette(c("#F5F5F5", "#616161"))  
 
 racevars <- c(
   White      = "P005003",
@@ -90,16 +98,16 @@ plot(sf::st_geometry(Wayne),
 Wayne <- Wayne %>%
   mutate(
     #counting the share
-    WhiteShare    = White / Pop2010,
-    BlackShare    = Black / Pop2010,
-    AsianShare    = Asian / Pop2010,
-    HispanicShare = Hispanic / Pop2010,
+    WhiteShare    = White / Pop2010 * 1000,
+    BlackShare    = Black / Pop2010 * 1000,
+    AsianShare    = Asian / Pop2010 * 1000,
+    HispanicShare = Hispanic / Pop2010 * 1000,
     
     #counting the proportion
-    WhiteProportion    = White / sum(White),
-    BlackProportion    = Black / sum(Black),
-    AsianProportion    = Asian / sum(Asian),
-    HispanicProportion = Hispanic / sum(Hispanic),
+    WhiteProportion    = White / sum(White) * 1000,
+    BlackProportion    = Black / sum(Black) * 1000,
+    AsianProportion    = Asian / sum(Asian) * 1000,
+    HispanicProportion = Hispanic / sum(Hispanic) * 1000,
     
     #counting Location Quotient
     White_LQ    = (White    / Pop2010) / (sum(White)    / sum(Pop2010)),
@@ -109,6 +117,7 @@ Wayne <- Wayne %>%
   )
 
 
+
 # map for ethnic
 # white
 cartography::choroLayer(
@@ -116,9 +125,11 @@ cartography::choroLayer(
   var = "WhiteProportion",
   method = "quantile",
   nclass = 5,
-  col = cartography::carto.pal(pal1 = "purple.pal", n1 = 5),
-  legend.title.txt = "Share of County's White Population",
+  col = white_pal(5),
+  breaks = brks,
+  legend.title.txt = "‰ of County's White Population",
   legend.pos = "bottomright",
+  legend.values.rnd = 2,
   border = "grey70"
 )
 cartography::layoutLayer(
@@ -134,9 +145,11 @@ cartography::choroLayer(
   var = "BlackProportion",
   method = "quantile",
   nclass = 5,
-  col = cartography::carto.pal(pal1 = "purple.pal", n1 = 5),
-  legend.title.txt = "Share of County's Black Population",
+  col = black_pal(5),
+  breaks = brks,
+  legend.title.txt = "‰ of County's Black Population",
   legend.pos = "bottomright",
+  legend.values.rnd = 2,
   border = "grey70"
 )
 cartography::layoutLayer(
@@ -152,9 +165,11 @@ cartography::choroLayer(
   var = "AsianProportion",
   method = "quantile",
   nclass = 5,
-  col = cartography::carto.pal(pal1 = "purple.pal", n1 = 5),
-  legend.title.txt = "Share of County's Asian Population",
+  col = asian_pal(5),
+  breaks = brks,
+  legend.title.txt = "‰ of County's Asian Population",
   legend.pos = "bottomright",
+  legend.values.rnd = 2,
   border = "grey70"
 )
 cartography::layoutLayer(
@@ -170,9 +185,11 @@ cartography::choroLayer(
   var = "HispanicProportion",
   method = "quantile",
   nclass = 5,
-  col = cartography::carto.pal(pal1 = "purple.pal", n1 = 5),
-  legend.title.txt = "Share of County's Hispanic Population",
+  col = hisp_pal(5),
+  breaks = brks,
+  legend.title.txt = "‰ of County's Hispanic Population",
   legend.pos = "bottomright",
+  legend.values.rnd = 2,
   border = "grey70"
 )
 cartography::layoutLayer(
