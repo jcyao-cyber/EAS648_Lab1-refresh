@@ -96,10 +96,10 @@ Wayne <- Wayne %>%
     HispanicShare = Hispanic / Pop2010,
     
     #counting the proportion
-    WhiteProportion    = White / sum(White, na.rm = TRUE),
-    BlackProportion    = Black / sum(Black, na.rm = TRUE),
-    AsianProportion    = Asian / sum(Asian, na.rm = TRUE),
-    HispanicProportion = Hispanic / sum(Hispanic, na.rm = TRUE),
+    WhiteProportion    = White / sum(White),
+    BlackProportion    = Black / sum(Black),
+    AsianProportion    = Asian / sum(Asian),
+    HispanicProportion = Hispanic / sum(Hispanic),
     
     #counting Location Quotient
     White_LQ    = (White    / Pop2010) / (sum(White)    / sum(Pop2010)),
@@ -108,6 +108,79 @@ Wayne <- Wayne %>%
     Hispanic_LQ = (Hispanic / Pop2010) / (sum(Hispanic) / sum(Pop2010))
   )
 
+
+# map for ethnic
+# white
+cartography::choroLayer(
+  x = Wayne,
+  var = "WhiteProportion",
+  method = "quantile",
+  nclass = 5,
+  col = cartography::carto.pal(pal1 = "purple.pal", n1 = 5),
+  legend.title.txt = "Share of County's White Population",
+  legend.pos = "bottomright",
+  border = "grey70"
+)
+cartography::layoutLayer(
+  title = "Spatial Distribution of White Population (Proportion)",
+  author = "Jincheng Yao",
+  sources = "US Census 2010"
+)
+cartography::north(pos = "topleft")
+
+# black
+cartography::choroLayer(
+  x = Wayne,
+  var = "BlackProportion",
+  method = "quantile",
+  nclass = 5,
+  col = cartography::carto.pal(pal1 = "purple.pal", n1 = 5),
+  legend.title.txt = "Share of County's Black Population",
+  legend.pos = "bottomright",
+  border = "grey70"
+)
+cartography::layoutLayer(
+  title = "Spatial Distribution of Black Population (Proportion)",
+  author = "Jincheng Yao",
+  sources = "US Census 2010"
+)
+cartography::north(pos = "topleft")
+
+# asian
+cartography::choroLayer(
+  x = Wayne,
+  var = "AsianProportion",
+  method = "quantile",
+  nclass = 5,
+  col = cartography::carto.pal(pal1 = "purple.pal", n1 = 5),
+  legend.title.txt = "Share of County's Asian Population",
+  legend.pos = "bottomright",
+  border = "grey70"
+)
+cartography::layoutLayer(
+  title = "Spatial Distribution of Asian Population (Proportion)",
+  author = "Jincheng Yao",
+  sources = "US Census 2010"
+)
+cartography::north(pos = "topleft")
+
+# hispanic
+cartography::choroLayer(
+  x = Wayne,
+  var = "HispanicProportion",
+  method = "quantile",
+  nclass = 5,
+  col = cartography::carto.pal(pal1 = "purple.pal", n1 = 5),
+  legend.title.txt = "Share of County's Hispanic Population",
+  legend.pos = "bottomright",
+  border = "grey70"
+)
+cartography::layoutLayer(
+  title = "Spatial Distribution of Hispanic Population (Proportion)",
+  author = "Jincheng Yao",
+  sources = "US Census 2010"
+)
+cartography::north(pos = "topleft")
 
 ```
 
