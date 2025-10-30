@@ -119,7 +119,7 @@ Wayne <- Wayne %>%
 
 
 # map for ethnic share
-par(mfrow = c(2, 2), mar = c(0.5,0.5,0.5,0.5))
+par(mfrow = c(2, 2), mar = c(0,0.5,0.5,0),oma = c(0,1,1.5,0))
 
 # white
 cartography::choroLayer(
@@ -129,12 +129,16 @@ cartography::choroLayer(
   nclass = 5,
   col = white_pal(5),
   breaks = brks,
-  border = "grey70")
+  border = "grey70",
+  
+  legend.pos = "bottomright",
+  legend.title.txt = "",
+  legend.values.rnd = 2)
 
-mtext("White",
+mtext("White\nProportion ‰",
       side = 3,
-      line = -5.5,
-      adj = 0.78,
+      line = -8.5,
+      adj = 0.95,
       font = 2,
       cex = 1.1,
       col = "#616161")
@@ -149,11 +153,14 @@ cartography::choroLayer(
   col = black_pal(5),
   breaks = brks,
   border = "grey70",
-)
-mtext("Black",
+  
+  legend.pos = "bottomright",
+  legend.title.txt = "",
+  legend.values.rnd = 2)
+mtext("Black\nProportion ‰",
       side = 3,
-      line = -5.5,
-      adj = 0.78,
+      line = -8.5,
+      adj = 0.95,
       font = 2,
       cex = 1.1,
       col = "#4B0082")
@@ -166,12 +173,15 @@ cartography::choroLayer(
   nclass = 5,
   col = asian_pal(5),
   breaks = brks,
-  border = "grey70"
-)
-mtext("Asian",
+  border = "grey70",
+  
+  legend.pos = "bottomright",
+  legend.title.txt = "",
+  legend.values.rnd = 2)
+mtext("Asian\nProportion ‰",
       side = 3,
-      line = -5.5,
-      adj = 0.78,
+      line = -8.5,
+      adj = 0.95,
       font = 2,
       cex = 1.1,
       col = "#0D47A1")
@@ -184,26 +194,49 @@ cartography::choroLayer(
   nclass = 5,
   col = hisp_pal(5),
   breaks = brks,
-  border = "grey70"
+  border = "grey70",
+  legend.pos = "bottomright",
+  
+  legend.title.txt = "",
+  legend.values.rnd = 2
 )
-mtext("Hispanic",
+
+mtext("Hispanic\nProportion(‰)",
       side = 3,
-      line = -5.5,
-      adj = 0.82,
+      line = -8.5,
+      adj = 0.95,
       font = 2,
       cex = 1.1,
       col = "#E65100")
+
 
 par(mfrow=c(1,1))
 
 # global legend
 cartography::layoutLayer(
-  title = "Ethnic Group Population Share in Wayne County (2010)",
+  title = "",
   author = "Jincheng Yao",
   sources = "US Census 2010",
-  north = FALSE # turn off default north arrow
+  north = FALSE,
+  scale = FALSE,
+  frame = FALSE
 )
-cartography::north(pos = "topright")
+
+bb <- sf::st_bbox(Wayne)
+x1 <- bb["xmax"] + 0.16 * (bb["xmax"] - bb["xmin"])
+x2 <- bb["xmax"] + 0.1 * (bb["xmax"] - bb["xmin"])
+y1 <- bb["ymax"] - 0.05 * (bb["ymax"] - bb["ymin"])
+y2 <- bb["ymax"] - 0.13 * (bb["ymax"] - bb["ymin"])
+cartography::north(pos = c(x1, y1))
+cartography::barscale(pos = c(x, y2),  unit = "km")
+
+
+mtext("Ethnic Group Population Share in Wayne County (2010)",
+      side = 3, 
+      outer = TRUE, 
+      line = -0.2, 
+      cex = 1.6, 
+      font = 2)
 
 
 ```
