@@ -26,9 +26,10 @@ options (width = 80)
 
 
 
-```{r 1, echo = FALSE}
+```{r 1, include=FALSE}
 library(ggplot2)
 library(tidycensus)
+library(tidyverse)
 library(tmap)
 library(tmaptools)
 library(dplyr)        
@@ -41,6 +42,7 @@ library(SpatialPosition)
 library(maptiles) 
 library(terra)
 library(potential)
+library(ggpubr)
 
 # general setting
 census_api_key("2495886b30a9eed86c09bc346d16b8febef89ddc")
@@ -50,6 +52,23 @@ black_pal    <- colorRampPalette(c("#F2E5FF", "#4B0082"))
 asian_pal    <- colorRampPalette(c("#E3F2FD", "#0D47A1"))  
 hisp_pal     <- colorRampPalette(c("#FFF3E0", "#E65100"))  
 white_pal    <- colorRampPalette(c("#F5F5F5", "#616161"))  
+
+
+
+#color for plots
+point_colors <- c(
+  White    = "#616161",
+  Black    = "#4B0082",
+  Asian    = "#0D47A1",
+  Hispanic = "#E65100"
+)
+
+fill_colors <- c(
+  White    = "#F5F5F5",
+  Black    = "#F2E5FF",
+  Asian    = "#E3F2FD",
+  Hispanic = "#FFF3E0"
+)
 
 # data
 racevars <- c(
@@ -89,7 +108,6 @@ Wayne <- sf::st_transform(Wayne, 26917)
 ```
 
 ```{r 2, echo = TRUE}
-
 # index about population
 Wayne <- Wayne %>%
   mutate(
@@ -120,7 +138,7 @@ Wayne <- Wayne %>%
 brks_Pop <- c(0, 0.1, 0.5, 1, 2, 5)
 
 # map for ethnic proportion
-par(mfrow = c(2, 2), mar = c(0,0.5,0.5,0),oma = c(0,1,1.5,0))
+par(mfrow = c(2, 2), mar = c(0,0.5,0.5,0),oma = c(0,0,1.5,0))
 
 # white
 cartography::choroLayer(
@@ -138,10 +156,10 @@ cartography::choroLayer(
 
 mtext("White\nProportion(‰)",
       side = 3,
-      line = -8.5,
+      line = -9.5,
       adj = 0.95,
       font = 2,
-      cex = 1.1,
+      cex = 0.9,
       col = "#616161")
 
 
@@ -160,10 +178,10 @@ cartography::choroLayer(
   legend.values.rnd = 2)
 mtext("Black\nProportion(‰)",
       side = 3,
-      line = -8.5,
+      line = -9.5,
       adj = 0.95,
       font = 2,
-      cex = 1.1,
+      cex = 0.9,
       col = "#4B0082")
 
 # asian
@@ -181,10 +199,10 @@ cartography::choroLayer(
   legend.values.rnd = 2)
 mtext("Asian\nProportion(‰)",
       side = 3,
-      line = -8.5,
+      line = -9.5,
       adj = 0.95,
       font = 2,
-      cex = 1.1,
+      cex = 0.9,
       col = "#0D47A1")
 
 # hispanic
@@ -204,10 +222,10 @@ cartography::choroLayer(
 
 mtext("Hispanic\nProportion(‰)",
       side = 3,
-      line = -8.5,
+      line = -9.5,
       adj = 0.95,
       font = 2,
-      cex = 1.1,
+      cex = 0.9,
       col = "#E65100")
 
 
@@ -224,10 +242,10 @@ cartography::layoutLayer(
 )
 
 bb <- sf::st_bbox(Wayne)
-x1 <- bb["xmax"] + 0.16 * (bb["xmax"] - bb["xmin"])
-x2 <- bb["xmax"] + 0.1 * (bb["xmax"] - bb["xmin"])
-y1 <- bb["ymax"] - 0.05 * (bb["ymax"] - bb["ymin"])
-y2 <- bb["ymax"] - 0.13 * (bb["ymax"] - bb["ymin"])
+x1 <- bb["xmax"] + 0.04 * (bb["xmax"] - bb["xmin"])
+x2 <- bb["xmax"] - 0.01 * (bb["xmax"] - bb["xmin"])
+y1 <- bb["ymax"] - 0.12 * (bb["ymax"] - bb["ymin"])
+y2 <- bb["ymax"] - 0.20 * (bb["ymax"] - bb["ymin"])
 cartography::north(pos = c(x1, y1))
 cartography::barscale(pos = c(x2, y2),  unit = "km")
 
@@ -251,7 +269,7 @@ max_LQ <- max(Wayne$White_LQ, Wayne$Black_LQ, Wayne$Asian_LQ, Wayne$Hispanic_LQ,
 brks_LQ <- c(0, 0.5, 1, 2, 20)
 
 # map for ethnic Location Quotient (LQ)
-par(mfrow = c(2, 2), mar = c(0,0.5,0.5,0),oma = c(0,1,1.5,0))
+par(mfrow = c(2, 2), mar = c(0,0.5,0.5,0),oma = c(0,0,1.5,0))
 
 # white
 cartography::choroLayer(
@@ -267,12 +285,12 @@ cartography::choroLayer(
   legend.title.txt = "",
   legend.values.rnd = 2)
 
-mtext("White\nLQ",
+mtext("White LQ",
       side = 3,
-      line = -8.5,
+      line = -9.5,
       adj = 0.95,
       font = 2,
-      cex = 1.1,
+      cex = 0.9,
       col = "#616161")
 
 
@@ -289,12 +307,12 @@ cartography::choroLayer(
   legend.pos = "bottomright",
   legend.title.txt = "",
   legend.values.rnd = 2)
-mtext("Black\nLQ",
+mtext("Black LQ",
       side = 3,
-      line = -8.5,
+      line = -9.5,
       adj = 0.95,
       font = 2,
-      cex = 1.1,
+      cex = 0.9,
       col = "#4B0082")
 
 # asian
@@ -310,12 +328,12 @@ cartography::choroLayer(
   legend.pos = "bottomright",
   legend.title.txt = "",
   legend.values.rnd = 2)
-mtext("Asian\nLQ",
+mtext("Asian LQ",
       side = 3,
-      line = -8.5,
+      line = -9.5,
       adj = 0.95,
       font = 2,
-      cex = 1.1,
+      cex = 0.9,
       col = "#0D47A1")
 
 # hispanic
@@ -333,12 +351,12 @@ cartography::choroLayer(
   legend.values.rnd = 2
 )
 
-mtext("Hispanic\nLQ",
+mtext("Hispanic LQ",
       side = 3,
-      line = -8.5,
+      line = -9.5,
       adj = 0.95,
       font = 2,
-      cex = 1.1,
+      cex = 0.9,
       col = "#E65100")
 
 
@@ -355,10 +373,10 @@ cartography::layoutLayer(
 )
 
 bb <- sf::st_bbox(Wayne)
-x1 <- bb["xmax"] + 0.16 * (bb["xmax"] - bb["xmin"])
-x2 <- bb["xmax"] + 0.1 * (bb["xmax"] - bb["xmin"])
-y1 <- bb["ymax"] - 0.05 * (bb["ymax"] - bb["ymin"])
-y2 <- bb["ymax"] - 0.13 * (bb["ymax"] - bb["ymin"])
+x1 <- bb["xmax"] + 0.04 * (bb["xmax"] - bb["xmin"])
+x2 <- bb["xmax"] - 0.01 * (bb["xmax"] - bb["xmin"])
+y1 <- bb["ymax"] - 0.15 * (bb["ymax"] - bb["ymin"])
+y2 <- bb["ymax"] - 0.23 * (bb["ymax"] - bb["ymin"])
 cartography::north(pos = c(x1, y1))
 cartography::barscale(pos = c(x2, y2),  unit = "km")
 
@@ -372,3 +390,100 @@ mtext("Ethnic Group Population Share in Wayne County (2010)",
 
 
 ```
+
+
+```{r 5, echo = TRUE}
+# data prepare for bar chart
+Wayne_df <- Wayne %>%
+  as.data.frame() %>%
+  select(NAME,
+         WhiteProportion, BlackProportion, AsianProportion, HispanicProportion,
+         White_LQ, Black_LQ, Asian_LQ, Hispanic_LQ)
+
+# proportion
+prop_long <- Wayne_df %>%
+  select(NAME, ends_with("Proportion")) %>%
+  pivot_longer(
+    cols = -NAME,
+    names_to = "Group",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Group = sub("Proportion", "", Group),
+    Metric = "Proportion"
+  )
+
+# LQ
+lq_long <- Wayne_df %>%
+  select(NAME, ends_with("LQ")) %>%
+  pivot_longer(
+    cols = -NAME,
+    names_to = "Group",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Group = sub("_LQ", "", Group),
+    Metric = "LQ"
+  )
+
+Wayne_long <- bind_rows(prop_long, lq_long)
+
+Wayne_long$Metric <- factor(
+  Wayne_long$Metric,
+  levels = c("Proportion", "LQ")
+)
+
+```
+
+```{r 6, echo = TRUE,warning=FALSE}
+# boxplot
+ggplot(Wayne_long, aes(x = Group, y = Value)) +
+
+  geom_boxplot(
+    aes(fill = Group, color = Group),
+    size = 0.9,
+    outlier.shape = NA
+  ) +
+  scale_fill_manual(values = fill_colors) +
+  scale_color_manual(values = point_colors) +
+  facet_wrap(~Metric, ncol = 1) +
+  ylim(0, 4) +
+  geom_hline(data = subset(Wayne_long, Metric == "LQ"),
+             aes(yintercept = 1),
+             linetype = "dashed",
+             color = "grey25") +
+  labs(
+    title = "Ethnic Group Proportion vs Location Quotient",
+    subtitle = "Wayne County, Michigan",
+    x = "Ethnic Group",
+    y = "Value"
+  ) +
+  theme_minimal(base_size = 14) +
+  
+  #setting of background
+  theme(
+  legend.position = "none",
+  strip.text = element_text(face = "bold", size = 14),
+  axis.title.x = element_text(face = "bold"),
+  axis.title.y = element_text(face = "bold"),
+
+  
+  strip.background = element_rect(fill = "white", color = NA),
+  panel.background = element_blank(),
+  plot.background = element_blank(),
+  panel.grid = element_blank(),
+  axis.line = element_line(color = "black", size = 0.6),
+  axis.ticks = element_line(color = "black", size = 0.5),
+  plot.title = element_text(face ="bold", hjust = 0.5),
+  plot.subtitle = element_text(hjust = 0.5)
+)
+
+
+
+
+
+```
+
+
+
+Proportion captures local majority/minority structures, while LQ captures the spatial importance of each tract for a racial group. Both are necessary to properly understand racial segregation patterns.
