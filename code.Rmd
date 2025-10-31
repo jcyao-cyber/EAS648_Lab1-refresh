@@ -24,7 +24,7 @@ options (width = 80)
 
 ```
 
-
+# preparation
 
 ```{r 1, include=FALSE}
 library(ggplot2)
@@ -131,7 +131,51 @@ Wayne <- Wayne %>%
   )
 ```
 
+```{r 5, echo = TRUE}
+# data prepare for bar chart
+Wayne_df <- Wayne %>%
+  as.data.frame() %>%
+  select(NAME,
+         WhiteProportion, BlackProportion, AsianProportion, HispanicProportion,
+         White_LQ, Black_LQ, Asian_LQ, Hispanic_LQ)
 
+# proportion
+prop_long <- Wayne_df %>%
+  select(NAME, ends_with("Proportion")) %>%
+  pivot_longer(
+    cols = -NAME,
+    names_to = "Group",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Group = sub("Proportion", "", Group),
+    Metric = "Proportion"
+  )
+
+# LQ
+lq_long <- Wayne_df %>%
+  select(NAME, ends_with("LQ")) %>%
+  pivot_longer(
+    cols = -NAME,
+    names_to = "Group",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Group = sub("_LQ", "", Group),
+    Metric = "LQ"
+  )
+
+Wayne_long <- bind_rows(prop_long, lq_long)
+
+Wayne_long$Metric <- factor(
+  Wayne_long$Metric,
+  levels = c("Proportion", "LQ")
+)
+
+```
+
+
+# Analysis in proportion aspect
 
 ```{r 3, echo = TRUE}
 #breaks for proportion
@@ -250,7 +294,7 @@ cartography::north(pos = c(x1, y1))
 cartography::barscale(pos = c(x2, y2),  unit = "km")
 
 
-mtext("Ethnic Group Population Share in Wayne County (2010)",
+mtext("Ethnic Group Population Proportion in Wayne County (2010)",
       side = 3, 
       outer = TRUE, 
       line = -0.2, 
@@ -260,8 +304,14 @@ mtext("Ethnic Group Population Share in Wayne County (2010)",
 
 ```
 
+The Ethnic Group Population Proportion shows the percentage of different ethnic groups in Wayne County's total population.\
+The map reveals that areas with a high proportion of white residents are primarily located in the western and southern suburbs of the county; the proportion of white residents is significantly lower in the downtown area.\
+Black residents are mainly concentrated in the northeastern downtown area and surrounding communities.\
+Asian residents are mainly distributed in scattered locations, near major transportation routes or commercial areas in the suburbs.\
+Hispanic residents are more evenly distributed, with the highest concentration in the south.\
 
 
+# Analysis in Location Quotient(LQ) aspect
 
 ```{r 4, echo = TRUE}
 #breaks for LQ
@@ -381,7 +431,7 @@ cartography::north(pos = c(x1, y1))
 cartography::barscale(pos = c(x2, y2),  unit = "km")
 
 
-mtext("Ethnic Group Population Share in Wayne County (2010)",
+mtext("Ethnic Group Population LQ in Wayne County (2010)",
       side = 3, 
       outer = TRUE, 
       line = -0.2, 
@@ -391,49 +441,14 @@ mtext("Ethnic Group Population Share in Wayne County (2010)",
 
 ```
 
+While proportion captures ethnic population structures, LQ captures the spatial importance of each tract for a racial group, which means it could identify areas with significant ethnic segregation.\
+Black residents are primarily located in the core of Detroit, with LQ scores reaching 2 or higher, which indicates a high geographical concentration of Black people in these areas and potentially suggesting ethnic community boundaries.\
+White residents have LQ scores significantly >1 in suburban areas and significantly <1 in urban areas, reflecting a clear trend of suburbanization.\
+Asian residents have LQ scores <1 in most areas, with only a few slightly >1, indicating that Asians are relatively dispersed within the county and are a later-immigrating group.\
+Hispanic residents have LQ scores >1 in some communities in the south, but the overall level is relatively low, reflecting that the Hispanic group is still in the early stages of a localized clustering and diffusion trend.
 
-```{r 5, echo = TRUE}
-# data prepare for bar chart
-Wayne_df <- Wayne %>%
-  as.data.frame() %>%
-  select(NAME,
-         WhiteProportion, BlackProportion, AsianProportion, HispanicProportion,
-         White_LQ, Black_LQ, Asian_LQ, Hispanic_LQ)
 
-# proportion
-prop_long <- Wayne_df %>%
-  select(NAME, ends_with("Proportion")) %>%
-  pivot_longer(
-    cols = -NAME,
-    names_to = "Group",
-    values_to = "Value"
-  ) %>%
-  mutate(
-    Group = sub("Proportion", "", Group),
-    Metric = "Proportion"
-  )
-
-# LQ
-lq_long <- Wayne_df %>%
-  select(NAME, ends_with("LQ")) %>%
-  pivot_longer(
-    cols = -NAME,
-    names_to = "Group",
-    values_to = "Value"
-  ) %>%
-  mutate(
-    Group = sub("_LQ", "", Group),
-    Metric = "LQ"
-  )
-
-Wayne_long <- bind_rows(prop_long, lq_long)
-
-Wayne_long$Metric <- factor(
-  Wayne_long$Metric,
-  levels = c("Proportion", "LQ")
-)
-
-```
+# Summary
 
 ```{r 6, echo = TRUE,warning=FALSE}
 # boxplot
@@ -485,5 +500,6 @@ ggplot(Wayne_long, aes(x = Group, y = Value)) +
 ```
 
 
-
-Proportion captures local majority/minority structures, while LQ captures the spatial importance of each tract for a racial group. Both are necessary to properly understand racial segregation patterns.
+Overall, This analysis highlights pronounced ethnic spatial segregation in Wayne County.\
+African American residents are strongly concentrated in Detroit’s urban core, while White residents dominate suburban areas.Hispanic and Asian communities show emerging but still localized clustering patterns.\
+These patterns suggest long-standing socio-economic(e.g. industrial relocation, housing policies) and historical factors(e.g. historical segregation) shaping residential distribution.
